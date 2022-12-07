@@ -5,6 +5,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
 from .models import Cat
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 
 # Add LoginForm to this line...
 from django.contrib.auth.forms import AuthenticationForm
@@ -103,4 +105,17 @@ def login_view(request):
 
 def logout_view(request):
   logout(request)
-  return HttpResponseRedirect('/cats')
+  return HttpResponseRedirect('/')
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return HttpResponseRedirect('/')
+        else:
+          return render(request, 'signup.html', {'form': form })
+    else:
+        form = UserCreationForm()
+        return render(request, 'signup.html', {'form': form })
